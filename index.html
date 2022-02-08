@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
+    <script src="https://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+
+  <style>
+    table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+footer {
+  background-color: #777;
+  padding:2px;
+  text-align: center;
+  color: white;
+  
+}
+
+    th,
+    td {
+      border: 1px solid black;
+       border-collapse: collapse;
+         
+           border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+    }
+  </style>
+ 
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+ 
+<p style="text-align:left; margin-top: 50px; ">
+<!-- <img src="getImgSrc()" style="width: 100%; max-width: 300px" /> -->
+<span id="myImg"></span>
+   <span style="float:right;"> 
+  TAX INVOICE
+  </span>
+</p>
+<p style="text-align:left;  margin-top: 100px;">
+ 
+  
+
+ <span id="vandoraddress"></span><br>
+  <span id="vendorEmail"></span><br>
+ </p>
+ 
+  
+</p>
+
+<p style="text-align:left; margin-top: 50px; "><b> Your Order from <span id="storeName"></span> <br> with AfriDelivery </b></p>
+
+<br>
+<p style="text-align:left;">
+ Bill to
+  <span style="float:right;">
+Receipt Date: <span id="updatedAt"></span>
+  </span>
+</p>
+<p style="text-align:left;">
+<span id="userName"></span>
+  <span style="float:right;">
+       Order Id : <span id="OrderId"></span>
+  </span>
+</p>
+<p style="text-align:left;">
+ <span id="address"></span><span id="city"></span> <span id="country"></span>
+  <span style="float:right;">
+   
+  </span>
+</p>
+
+
+<script type ="text/javascript"  >
+const queryString = window.location.search;
+ console.log("params",queryString)
+const parameters = new URLSearchParams(queryString);
+const product = parameters.get('orderId')
+console.log(product,"orderId");
+
+ console.log("params",parameters)
+const value = parameters.get('key');
+ console.log(value,"params",value)
+
+  var config = {
+      headers: { 'Access-Control-Allow-Origin': '*' , "charset": "UTF-8", 
+      "Access-Control-Allow-Credentials": "true", 'Content-type': 'text/plain' ,'Content-type': 'application/json', "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS" },
+    };
+ axios.post("https://vendor.ourmarket.tech/vendor/order/info", { "orderId"  : product , }, config)
+.then(response=> {
+            var result = response.data;
+            var addressValue=result.responseData.response.address
+            var orderDetails=result.responseData.response.orderDetails
+            console.log(result);
+           
+            var details=result.responseData.response
+              console.log(details);
+            //  document.getElementById("Tpin").innerHTML = result.sequenceNumber
+             document.getElementById("address").innerHTML = addressValue.addressType
+                document.getElementById("city").innerHTML = addressValue.city
+                 document.getElementById("country").innerHTML = addressValue.country
+                //    document.getElementById("phoneNo").innerHTML = addressValue.phoneNo
+                    //  document.getElementById("state").innerHTML = addressValue.state
+
+                // document.getElementById("street").innerHTML = addressValue.street
+                // document.getElementById("userEmail").innerHTML = addressValue.userEmail
+                document.getElementById("userName").innerHTML = addressValue.userName
+                //  document.getElementById("address").innerHTML = result.name
+                var dateValue=details.updatedAt
+                
+             document.getElementById("updatedAt").innerHTML = dateValue;
+             document.getElementById("OrderId").innerHTML = details.orderNumber
+               document.getElementById("totalAmount").innerHTML = details.totalAmount
+
+                // image trigger api -->
+          console.log("details.vendorId",details.vendorId)
+                  axios.post("https://vendor.ourmarket.tech/vendor/data",{vendorId:details.vendorId}, config).then(response=> {
+                var receiveData = response.data;  
+                var imgaName=receiveData.responseData.response
+                      console.log("receiveData",imgaName)
+                        document.getElementById("storeName").innerHTML = receiveData.responseData.response.storeName
+                           document.getElementById("vendorEmail").innerHTML = receiveData.responseData.response.vendorEmail
+                          document.getElementById("vandoraddress").innerHTML = receiveData.responseData.response.address
+                        console.log("details.receiveData",receiveData.responseData.response.address)
+                    
+                    function getImgSrc(item) {
+                        var type = item.image.imageType.split("/")[1];
+                        console.log("type", type);
+                        var src = `https://vendor.ourmarket.tech/image/${item.image.imageId}/${type}`;
+
+                        console.log("src", src);
+                      display_image(src, 276, 110, 'JavaScriptImage')
+                        return src;
+                        }
+                        getImgSrc(imgaName)
+                      function display_image(src, width, height, alt) {
+                          var a = document.createElement('img')
+                          a.src = src
+                          a.width = width
+                          a.height = height
+                          a.alt = alt
+                          // document.body.appendChild(a)
+                          document.getElementById("myImg").appendChild(a)
+                          }
+    
+  
+                            
+                  }).catch(error => 
+                      console.log(error)
+                  
+              );
+// mage trigger api ends -->
+
+          
+              //  var quantity=" "
+              //  var productName=" "
+              //  var selctedItemPrice=" "
+              //  var zmwValue=" "
+
+              // for (let i = 0; i < orderDetails.length; i++) {
+                
+              //    quantity = orderDetails[i].quantity
+              //    productName = orderDetails[i].productName
+              //    selctedItemPrice = orderDetails[i].selctedItemPrice
+              //   var  zmwV=orderDetails[i].quantity*orderDetails[i].selctedItemPrice
+              //  console.log("zmwValue",zmwV)
+              //  zmwValue = zmwV
+         
+              // }
+              //  document.getElementById("quantity").innerHTML   =quantity
+              //    document.getElementById("productName").innerHTML =productName
+              //    document.getElementById("selctedItemPrice").innerHTML = selctedItemPrice
+              //  document.getElementById("zmwData").innerHTML = zmwValue
+          
+               $(document).ready(function () {
+        var items = orderDetails
+
+        $('#itemTemplate').tmpl(items).appendTo('#itemList tbody')
+      })
+    
+                
+        }).catch(error => 
+            console.log(error)
+        
+    );
+   
+</script>
+
+
+   <script id="itemTemplate" type="text/x-jquery-tmpl">
+      <tr>
+          <td>${quantity}</td>
+          <td>${productName}</td>
+          <td>${selctedItemPrice}</td>
+          <td>${selctedItemPrice*quantity}</td>
+      </tr>
+    
+    </script>
+ 
+ <table id="itemList">
+      <thead>
+        <tr>
+          <th>QTY</th>
+      <th>DESCRIPTION</th>
+        <th>UNIT PRICE</th>
+          <th>ZMW</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot> <tr><td></td><td></td><td>VAT @ 16%</td><td>ZMW 4.40</td></tr>
+      <tr><td></td><td></td><td>TOTAL</td><td>ZMW <span id="totalAmount"></span></td></tr></tfoot>
+    </table>
+  
+ <footer> <p>Building Communities through i-Commerce.</p>
+</footer>
+</body> 
+</html>

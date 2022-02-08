@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p id="demo"></p>
+    <p id="demo1"></p>
+
+    <script>
+      function display_image(src, width, height, alt) {
+        var a = document.createElement('img')
+        a.src = src
+        a.width = width
+        a.height = height
+        a.alt = alt
+        document.body.appendChild(a)
+      }
+      display_image('one.png', 276, 110, 'JavaScriptImage')
+    </script>
+  </body>
+</html>
